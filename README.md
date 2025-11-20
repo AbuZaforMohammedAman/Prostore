@@ -150,3 +150,117 @@ npx prisma generate
 
 Making the product details page (Done)
 
+11) 
+Domain: https://prostorenew.vercel.app/
+
+12)
+from : https://authjs.dev/getting-started/adapters/prisma
+
+getting the User, Account, Session & VerificationToken model
+
+npx prisma generate
+npx prisma migrate dev --name add_user_based_tables
+
+The following migration(s) have been created and applied from new schema changes:
+
+prisma\migrations/
+  └─ 20251110214618_add_user_based_tables/
+    └─ migration.sql
+
+Your database is now in sync with your schema
+
+npx prisma studio
+
+13)
+npm i bcrypt-ts-edge   [Used for password]
+
+const sampleData = {
+  users:  [
+    {
+      name: 'Aman',
+      email: 'admin@example.com',
+      password: hashSync('123456', 10),
+      role: 'admin',
+    },
+    {
+      name: 'Abdullah',
+      email: 'user@example.com',
+      password: hashSync('123456', 10),
+      role: 'user',
+    },
+  ],
+
+  async function main() {
+    const prisma = new PrismaClient();
+    await prisma.product.deleteMany();
+    await prisma.account.deleteMany();
+    await prisma.session.deleteMany();
+    await prisma.verificationToken.deleteMany();
+    await prisma.user.deleteMany();
+
+    await prisma.product.createMany({ data: sampleData.products });
+    await prisma.user.createMany({ data: sampleData.users });
+
+    console.log("Database seeded successfully!");
+}
+
+main();
+
+npx tsx ./db/seed
+
+14) NextAuth Authentication system.
+npm i next-auth@beta & npm i @auth/prisma-adapter
+cmd:  openssl rand -base64 32
+
+D:\Next.js project\prostore>openssl rand -base64 32
+lwvlKGLY5mWtbIPBaduHShfavO2jZ7YSJsai6JuSOyw=
+
+IN .env
+NEXTAUTH_SECRET="lwvlKGLY5mWtbIPBaduHShfavO2jZ7YSJsai6JuSOyw="
+
+making a file in root named auth.ts
+
+15) making a folder in app named api/auth
+
+app/api/auth/[...nextauth]
+
+in validators.ts 
+// Schema for signing users in
+export const signInFormSchema = z.object({
+    email: z.string().email('Invalid email address'),
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+than making user.actions.ts in actions folder
+
+16) 
+npx shadcn@latest add label input
+make app/(auth)/sign-in/layout.tsx
+credentials-signin-form.tsx & page.tsx
+
+Now it will signIn
+
+http://localhost:3000/api/auth/session
+
+17)
+making the components/header/user-button.tsx
+
+validators.tsx
+// Schema for signing up a user
+export const signUpFormSchema = z
+  .object({
+    name: z.string().min(3, 'Name must be at least 3 characters'),
+    email: z.string().email('Invalid email address'),
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z
+      .string()
+      .min(6, 'Confirm password must be at least 6 characters'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+update user.action.ts
+
+18) Complete
